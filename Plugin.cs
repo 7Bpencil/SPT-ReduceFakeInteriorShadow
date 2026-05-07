@@ -23,7 +23,7 @@ namespace SevenBoldPencil.ReduceFakeInteriorShadow
         private void Awake()
 		{
 			ShadowOpacity = Config.Bind<float>("Main", "Shadow Opacity", 0.25f, new ConfigDescription("0 is disabled, 1 is original", new AcceptableValueRange<float>(0f, 1f)));
-			new Patch_AmbientLight_method_8().Enable();
+			new Patch_AmbientLight_method_7().Enable();
         }
     }
 
@@ -69,11 +69,11 @@ namespace SevenBoldPencil.ReduceFakeInteriorShadow
 		}
     }
 
-    public class Patch_AmbientLight_method_8 : ModulePatch
+    public class Patch_AmbientLight_method_7 : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
         {
-            return AccessTools.Method(typeof(AmbientLight), nameof(AmbientLight.method_8));
+            return AccessTools.Method(typeof(AmbientLight), nameof(AmbientLight.method_7));
         }
 
         [PatchPrefix]

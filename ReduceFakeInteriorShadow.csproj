@@ -1,63 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="Shared.props" />
+
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-    <Nullable>disable</Nullable>
-    <Authors>7Bpencil</Authors>
-    <Copyright>Copyright (c) 7Bpencil 2026</Copyright>
     <AssemblyName>7Bpencil.ReduceFakeInteriorShadow</AssemblyName>
-    <AssemblyVersion>1.0.1</AssemblyVersion>
-    <FileVersion>$(AssemblyVersion)</FileVersion>
-    <Version>$(AssemblyVersion)</Version>
-    <LangVersion>latest</LangVersion>
-    <Deterministic>true</Deterministic>
-    <SPTPath>..\..</SPTPath>
-    <OutPath>$(SPTPath)\BepInEx\plugins</OutPath>
-    <StagePath>$(ProjectDir)Stage\BepInEx\plugins</StagePath>
-    <AssemblySearchPaths>
-      $(AssemblySearchPaths);
-      $(SPTPath)\EscapeFromTarkov_Data\Managed;
-      $(SPTPath)\BepInEx\core;
-      $(SPTPath)\BepInEx\plugins\spt;
-      $(SPTPath)\BepInEx\plugins\Fika;
-    </AssemblySearchPaths>
   </PropertyGroup>
 
   <ItemGroup>
     <Reference Include="0Harmony" />
-    <Reference Include="spt-common" />
     <Reference Include="spt-reflection" />
     <Reference Include="Assembly-CSharp" />
     <Reference Include="BepInEx" />
-    <Reference Include="Comfort" />
-    <Reference Include="Comfort.Unity" />
-    <Reference Include="CommonExtensions" />
-    <Reference Include="Newtonsoft.Json" />
-    <Reference Include="Sirenix.Serialization" />
-    <Reference Include="Unity.TextMeshPro" />
     <Reference Include="UnityEngine" />
-    <Reference Include="UnityEngine.AudioModule" />
-    <Reference Include="UnityEngine.AssetBundleModule" />
     <Reference Include="UnityEngine.CoreModule" />
-    <Reference Include="UnityEngine.IMGUIModule" />
-    <Reference Include="UnityEngine.InputLegacyModule" />
-    <Reference Include="UnityEngine.ImageConversionModule" />
-    <Reference Include="UnityEngine.TextRenderingModule" />
-    <Reference Include="UnityEngine.PhysicsModule" />
-    <Reference Include="UnityEngine.UI" />
-    <Reference Include="UnityEngine.UnityWebRequestModule" />
-    <Reference Include="UnityEngine.UnityWebRequestTextureModule" />
-    <Reference Include="UnityEngine.VideoModule" />
   </ItemGroup>
-
-  <Target Name="CopyToSPT" AfterTargets="AfterBuild">
-    <Exec Command="mkdir &quot;$(OutPath)&quot;" ContinueOnError="true" />
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(OutPath)" />
-  </Target>
-
-  <Target Name="CopyToStage" AfterTargets="AfterBuild" Condition="'$(Configuration)'=='Release'">
-    <Exec Command="mkdir &quot;$(StagePath)&quot;" ContinueOnError="true" />
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(StagePath)" />
-  </Target>
 
 </Project>

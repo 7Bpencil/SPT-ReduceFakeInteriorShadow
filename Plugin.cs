@@ -81,16 +81,17 @@ namespace SevenBoldPencil.BrighterInteriors
         [PatchPrefix]
         public static bool Prefix(AmbientLight __instance, ref bool __result, CommandBuffer cmdBuf, StencilShadow ss, Vector3 camPos, bool disableColorPass = false)
         {
-			var __instance__ = new Proxy_AmbientLight(__instance);
-			var _clearStencilMaterial = __instance__._clearStencilMaterial;
-			var _writeStencilMaterial = __instance__._writeStencilMaterial;
-			var _quadMesh = __instance__._quadMesh;
-
 			if (!ss.Culling.PassCulling((ss.Bounds.center - camPos).sqrMagnitude, out var num))
 			{
 				__result = false;
 				return false;
 			}
+
+			var __instance__ = new Proxy_AmbientLight(__instance);
+			var _clearStencilMaterial = __instance__._clearStencilMaterial;
+			var _writeStencilMaterial = __instance__._writeStencilMaterial;
+			var _quadMesh = __instance__._quadMesh;
+
 			cmdBuf.BeginSample(StencilShadowsUnitMarkerName);
 			cmdBuf.DrawMesh(_quadMesh, Matrix4x4.identity, _clearStencilMaterial);
 			cmdBuf.DrawRenderer(ss.Renderer, _writeStencilMaterial, 0, 0);

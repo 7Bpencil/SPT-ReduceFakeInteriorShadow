@@ -50,17 +50,13 @@ namespace SevenBoldPencil.BrighterInteriors
 
     public struct Proxy_AmbientLight
     {
-        private static TypedFieldInfo<AmbientLight, Material> __material_1 = new("_clearStencilMaterial");
-        private static TypedFieldInfo<AmbientLight, Material> __material_2 = new("_writeStencilMaterial");
-	    private static TypedFieldInfo<AmbientLight, string> __string_0 = new("_stencilShadowsMarkerName");
-	    private static TypedFieldInfo<AmbientLight, Mesh> __mesh_0 = new("_quadMesh");
-	    private static TypedFieldInfo<AmbientLight, Matrix4x4> __matrix4x4_0 = new("MatrixIdentity");
+        private static TypedFieldInfo<AmbientLight, Material> __clearStencilMaterial = new("_clearStencilMaterial");
+        private static TypedFieldInfo<AmbientLight, Material> __writeStencilMaterial = new("_writeStencilMaterial");
+	    private static TypedFieldInfo<AmbientLight, Mesh> __quadMesh = new("_quadMesh");
 
-        public Material material_1 { get { return __material_1.Get(__instance); } set { __material_1.Set(__instance, value); } }
-        public Material material_2 { get { return __material_2.Get(__instance); } set { __material_2.Set(__instance, value); } }
-        public string string_0 { get { return __string_0.Get(__instance); } set { __string_0.Set(__instance, value); } }
-        public Mesh mesh_0 { get { return __mesh_0.Get(__instance); } set { __mesh_0.Set(__instance, value); } }
-        public Matrix4x4 matrix4x4_0 { get { return __matrix4x4_0.Get(__instance); } set { __matrix4x4_0.Set(__instance, value); } }
+        public Material _clearStencilMaterial { get { return __clearStencilMaterial.Get(__instance); } set { __clearStencilMaterial.Set(__instance, value); } }
+        public Material _writeStencilMaterial { get { return __writeStencilMaterial.Get(__instance); } set { __writeStencilMaterial.Set(__instance, value); } }
+        public Mesh _quadMesh { get { return __quadMesh.Get(__instance); } set { __quadMesh.Set(__instance, value); } }
 
 		private AmbientLight __instance;
 
@@ -72,6 +68,10 @@ namespace SevenBoldPencil.BrighterInteriors
 
     public class Patch_AmbientLight_DrawStencilShadow : ModulePatch
     {
+		public const string StencilShadowsUnitMarkerName = "StencilShadows_unit"; // same as AmbientLight._stencilShadowsMarkerName + "_unit"
+        public static readonly int _StencilAmbientColor = Shader.PropertyToID("_StencilAmbientColor");
+        public static readonly int _StencilFogAttenuation = Shader.PropertyToID("_StencilFogAttenuation");
+
         protected override MethodBase GetTargetMethod()
         {
 			Type[] parameters = [typeof(CommandBuffer), typeof(StencilShadow), typeof(Vector3), typeof(bool)];
@@ -82,27 +82,29 @@ namespace SevenBoldPencil.BrighterInteriors
         public static bool Prefix(AmbientLight __instance, ref bool __result, CommandBuffer cmdBuf, StencilShadow ss, Vector3 camPos, bool disableColorPass = false)
         {
 			var __instance__ = new Proxy_AmbientLight(__instance);
+			var _clearStencilMaterial = __instance__._clearStencilMaterial;
+			var _writeStencilMaterial = __instance__._writeStencilMaterial;
+			var _quadMesh = __instance__._quadMesh;
 
 			Bounds bounds = ss.Bounds;
-			float num;
-			if (!ss.Culling.PassCulling((bounds.center - camPos).sqrMagnitude, out num))
+			if (!ss.Culling.PassCulling((bounds.center - camPos).sqrMagnitude, out var num))
 			{
 				__result = false;
 				return false;
 			}
-			cmdBuf.BeginSample(__instance__.string_0 + "_unit");
-			cmdBuf.DrawMesh(__instance__.mesh_0, __instance__.matrix4x4_0, __instance__.material_1);
-			cmdBuf.DrawRenderer(ss.Renderer, __instance__.material_2, 0, 0);
-			cmdBuf.DrawRenderer(ss.Renderer, __instance__.material_2, 0, 1);
+			cmdBuf.BeginSample(StencilShadowsUnitMarkerName);
+			cmdBuf.DrawMesh(_quadMesh, Matrix4x4.identity, _clearStencilMaterial);
+			cmdBuf.DrawRenderer(ss.Renderer, _writeStencilMaterial, 0, 0);
+			cmdBuf.DrawRenderer(ss.Renderer, _writeStencilMaterial, 0, 1);
 			if (!disableColorPass)
 			{
-				cmdBuf.SetGlobalColor("_StencilAmbientColor", ss.Ambient * num * Plugin.ShadowOpacity.Value);
-				cmdBuf.SetGlobalFloat("_StencilFogAttenuation", ss.FogAttenuation);
-				cmdBuf.DrawMesh(__instance__.mesh_0, __instance__.matrix4x4_0, __instance__.material_2, 0, 2);
+				cmdBuf.SetGlobalColor(_StencilAmbientColor, ss.Ambient * num * Plugin.ShadowOpacity.Value);
+				cmdBuf.SetGlobalFloat(_StencilFogAttenuation, ss.FogAttenuation);
+				cmdBuf.DrawMesh(_quadMesh, Matrix4x4.identity, _writeStencilMaterial, 0, 2);
 			}
-			cmdBuf.DrawRenderer(ss.Renderer, __instance__.material_2, 0, 3);
-			cmdBuf.DrawRenderer(ss.Renderer, __instance__.material_2, 0, 4);
-			cmdBuf.EndSample(__instance__.string_0 + "_unit");
+			cmdBuf.DrawRenderer(ss.Renderer, _writeStencilMaterial, 0, 3);
+			cmdBuf.DrawRenderer(ss.Renderer, _writeStencilMaterial, 0, 4);
+			cmdBuf.EndSample(StencilShadowsUnitMarkerName);
 
 			__result = true;
 			return false;

@@ -3,7 +3,7 @@
   <Import Project="Shared.props" />
 
   <PropertyGroup>
-    <AssemblyName>7Bpencil.ReduceFakeInteriorShadow</AssemblyName>
+    <AssemblyName>7Bpencil.BrighterInteriors</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

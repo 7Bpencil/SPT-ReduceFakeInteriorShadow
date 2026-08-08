@@ -14,9 +14,9 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using SPT.Reflection.Patching;
 
-namespace SevenBoldPencil.ReduceFakeInteriorShadow
+namespace SevenBoldPencil.BrighterInteriors
 {
-    [BepInPlugin("7Bpencil.ReduceFakeInteriorShadow", "7Bpencil.ReduceFakeInteriorShadow", "1.0.1")]
+    [BepInPlugin("7Bpencil.BrighterInteriors", "7Bpencil.BrighterInteriors", "1.0.1")]
     public class Plugin : BaseUnityPlugin
 	{
 		public static ConfigEntry<float> ShadowOpacity;

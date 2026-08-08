@@ -86,8 +86,7 @@ namespace SevenBoldPencil.BrighterInteriors
 			var _writeStencilMaterial = __instance__._writeStencilMaterial;
 			var _quadMesh = __instance__._quadMesh;
 
-			Bounds bounds = ss.Bounds;
-			if (!ss.Culling.PassCulling((bounds.center - camPos).sqrMagnitude, out var num))
+			if (!ss.Culling.PassCulling((ss.Bounds.center - camPos).sqrMagnitude, out var num))
 			{
 				__result = false;
 				return false;

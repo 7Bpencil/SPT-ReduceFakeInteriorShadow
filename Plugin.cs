@@ -7,6 +7,7 @@
 
 using BepInEx;
 using BepInEx.Configuration;
+using System;
 using System.Reflection;
 using HarmonyLib;
 using UnityEngine;
@@ -23,7 +24,7 @@ namespace SevenBoldPencil.ReduceFakeInteriorShadow
         private void Awake()
 		{
 			ShadowOpacity = Config.Bind<float>("Main", "Shadow Opacity", 0.7f, new ConfigDescription("0 is disabled, 1 is original", new AcceptableValueRange<float>(0f, 1f)));
-			new Patch_AmbientLight_method_8().Enable();
+			new Patch_AmbientLight_DrawStencilShadow().Enable();
         }
     }
 
@@ -49,11 +50,11 @@ namespace SevenBoldPencil.ReduceFakeInteriorShadow
 
     public struct Proxy_AmbientLight
     {
-        private static TypedFieldInfo<AmbientLight, Material> __material_1 = new("material_1");
-        private static TypedFieldInfo<AmbientLight, Material> __material_2 = new("material_2");
-	    private static TypedFieldInfo<AmbientLight, string> __string_0 = new("string_0");
-	    private static TypedFieldInfo<AmbientLight, Mesh> __mesh_0 = new("mesh_0");
-	    private static TypedFieldInfo<AmbientLight, Matrix4x4> __matrix4x4_0 = new("matrix4x4_0");
+        private static TypedFieldInfo<AmbientLight, Material> __material_1 = new("_clearStencilMaterial");
+        private static TypedFieldInfo<AmbientLight, Material> __material_2 = new("_writeStencilMaterial");
+	    private static TypedFieldInfo<AmbientLight, string> __string_0 = new("_stencilShadowsMarkerName");
+	    private static TypedFieldInfo<AmbientLight, Mesh> __mesh_0 = new("_quadMesh");
+	    private static TypedFieldInfo<AmbientLight, Matrix4x4> __matrix4x4_0 = new("MatrixIdentity");
 
         public Material material_1 { get { return __material_1.Get(__instance); } set { __material_1.Set(__instance, value); } }
         public Material material_2 { get { return __material_2.Get(__instance); } set { __material_2.Set(__instance, value); } }
@@ -69,11 +70,12 @@ namespace SevenBoldPencil.ReduceFakeInteriorShadow
 		}
     }
 
-    public class Patch_AmbientLight_method_8 : ModulePatch
+    public class Patch_AmbientLight_DrawStencilShadow : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
         {
-            return AccessTools.Method(typeof(AmbientLight), nameof(AmbientLight.method_8));
+			Type[] parameters = [typeof(CommandBuffer), typeof(StencilShadow), typeof(Vector3), typeof(bool)];
+            return AccessTools.Method(typeof(AmbientLight), nameof(AmbientLight.DrawStencilShadow), parameters);
         }
 
         [PatchPrefix]

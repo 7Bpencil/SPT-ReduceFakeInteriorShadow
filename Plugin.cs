@@ -22,7 +22,7 @@ namespace SevenBoldPencil.ReduceFakeInteriorShadow
 
         private void Awake()
 		{
-			ShadowOpacity = Config.Bind<float>("Main", "Shadow Opacity", 0.25f, new ConfigDescription("0 is disabled, 1 is original", new AcceptableValueRange<float>(0f, 1f)));
+			ShadowOpacity = Config.Bind<float>("Main", "Shadow Opacity", 0.7f, new ConfigDescription("0 is disabled, 1 is original", new AcceptableValueRange<float>(0f, 1f)));
 			new Patch_AmbientLight_method_8().Enable();
         }
     }

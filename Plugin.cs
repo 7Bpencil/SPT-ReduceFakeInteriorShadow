@@ -16,7 +16,7 @@ using SPT.Reflection.Patching;
 
 namespace SevenBoldPencil.BrighterInteriors
 {
-    [BepInPlugin("7Bpencil.BrighterInteriors", "7Bpencil.BrighterInteriors", "1.0.1")]
+    [BepInPlugin("7Bpencil.BrighterInteriors", "7Bpencil.BrighterInteriors", "1.1.0")]
     public class Plugin : BaseUnityPlugin
 	{
 		public static ConfigEntry<float> ShadowOpacity;
